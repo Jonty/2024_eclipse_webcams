@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>2024 Total Eclipse Webcams</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+    body {
+            padding: 0;
+            margin: 0;
+        }
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([35.02, -87.2], 5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        function loadGeoJson(url) {
+            fetch(url)
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    L.geoJson(data, {
+                        onEachFeature: function(feature, layer) {
+                            if (feature.properties && feature.properties.title && feature.properties.url) {
+                                layer.bindPopup('<b>' + feature.properties.title + '</b><br><a href="' + feature.properties.url + '" target="_blank">Open Webcam</a>');
+                            }
+                        }
+                    }).addTo(map);
+                });
+        }
+
+        loadGeoJson('eclipse_2024_webcams_and_path.geojson');
+    </script>
+</body>
+</html>
